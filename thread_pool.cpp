@@ -17,6 +17,10 @@ std::function<void()> ThreadPool::TaskQueue::Pop() {
   return item;
 }
 
+bool ThreadPool::TaskQueue::Empty() {
+  return tasks_.empty();
+}
+
 ThreadPool::ThreadPool(unsigned int nums)
   : thread_nums_(nums),
     running_(false) {
@@ -61,7 +65,9 @@ void ThreadPool::DoWork() {
       task = std::move(task_queue_.Pop());
       if (!task) {
         free_nums_++;
-        cond_.wait(lock);
+        cond_.wait(lock, [&]() {
+          return !task_queue_.Empty();
+        });
         free_nums_--;
         task = task_queue_.Pop();
       }

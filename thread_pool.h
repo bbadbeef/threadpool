@@ -15,6 +15,7 @@ public:
   struct TaskQueue {
     void Add(std::function<void()>);
     std::function<void()> Pop();
+    bool Empty();
     std::list<std::function<void()>> tasks_;
   };
 
