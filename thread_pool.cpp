@@ -65,8 +65,8 @@ void ThreadPool::DoWork() {
       task = std::move(task_queue_.Pop());
       if (!task) {
         free_nums_++;
-        cond_.wait(lock, [&]() {
-          return !task_queue_.Empty();
+        cond_.wait(lock, [this]() {
+          return !running_ || !task_queue_.Empty();
         });
         free_nums_--;
         task = task_queue_.Pop();
