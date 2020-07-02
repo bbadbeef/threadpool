@@ -69,7 +69,7 @@ void ThreadPool::DoWork() {
           return !running_ || !task_queue_.Empty();
         });
         free_nums_--;
-        task = task_queue_.Pop();
+        task = std::move(task_queue_.Pop());
       }
       task_nums_--;
     }
