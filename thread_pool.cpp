@@ -29,13 +29,7 @@ ThreadPool::ThreadPool(unsigned int nums)
 }
 
 ThreadPool::~ThreadPool() {
-  running_ = false;
-  cond_.notify_all();
-  for (auto && t : threads_) {
-    if (t.joinable()) {
-      t.join();
-    }
-  }
+  Stop();
 }
 
 void ThreadPool::AddTask(std::function<void()> f) {
@@ -55,6 +49,12 @@ void ThreadPool::Start() {
 
 void ThreadPool::Stop() {
   running_ = false;
+  cond_.notify_all();
+  for (auto && t : threads_) {
+    if (t.joinable()) {
+      t.join();
+    }
+  }
 }
 
 void ThreadPool::DoWork() {
